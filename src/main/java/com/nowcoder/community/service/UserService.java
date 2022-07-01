@@ -167,4 +167,23 @@ public class UserService implements CommunityConstant {
     }
 
 
+    public boolean comparePassword(int userId, String password) {
+        User user = userMapper.selectById(userId);
+        return CommunityUtil.md5(password + user.getSalt()).equals(user.getPassword());
+    }
+
+    /**
+     * 修改密码
+     * @param userId
+     * @param password
+     * @return
+     */
+    public int modifyPassword(String ticket, int userId, String password) {
+        User user = userMapper.selectById(userId);
+        password = CommunityUtil.md5(password + user.getSalt());
+        loginTicketMapper.updateStatus(ticket,1);
+        return userMapper.updatePassword(userId, password);
+    }
+
+
 }

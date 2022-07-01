@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -82,7 +83,7 @@ public class UserController {
         String headerUrl = domain + contextPath + "/user/header/" + fileName;
         userService.updateHeader(user.getId(), headerUrl);
 
-        return "/redirect:/index";
+        return "redirect:/index";
     }
 
     @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
@@ -105,5 +106,23 @@ public class UserController {
         } catch (IOException e) {
             logger.error("读取头像失败：" + e.getMessage());
         }
+    }
+
+    @RequestMapping(path = "/modifyPassword", method = RequestMethod.POST)
+    public String modifyPassword(@CookieValue("ticket") String ticket, String oldPassword, String newPassword, String confirmPassword, Model model) {
+        User user = hostHolder.getUser();
+        // 原密码验证
+        if(!userService.comparePassword(user.getId(), oldPassword)) {
+            model.addAttribute("oldMsg", "密码错误！");
+            return "/site/setting";
+        }
+        // 新密码是否一致检测
+        if(!newPassword.equals(confirmPassword)) {
+            model.addAttribute("confirmMsg", "两次密码输入不一致！");
+            return "/site/setting";
+        }
+        // 修改密码
+        userService.modifyPassword(ticket, user.getId(), newPassword);
+        return "redirect:/login";
     }
 }
