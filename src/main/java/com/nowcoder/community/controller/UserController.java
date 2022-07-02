@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
@@ -22,7 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.http.HttpResponse;
+
 
 @Component
 @RequestMapping("/user")
@@ -45,11 +46,13 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
         return "/site/setting";
     }
 
+    @LoginRequired  // 需要登录才能访问此方法
     @RequestMapping(path="/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) { // 多个文件的话可以用数组存
         if (headerImage == null) {

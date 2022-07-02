@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller.interceptor;
 
+import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
@@ -22,6 +23,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Autowired
     private HostHolder hostHolder;
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
